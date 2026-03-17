@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlutIt – Find Gluten-Free Near You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Scroll reveal */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Feature card hover */
+    .feature-card {
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .feature-card:hover {
+      border-color: #d6d3d1;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 antialiased">
+
+  <!-- ── NAV ─────────────────────────────────────────────── -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <span class="font-bold text-xl tracking-tight">GlutIt</span>
+      <a href="#cta" class="text-sm font-medium px-4 py-2 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors duration-200">
+        Get Early Access
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ──────────────────────────────────────────────── -->
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+
+      <!-- Copy -->
+      <div>
+        <div class="inline-flex items-center gap-2 text-xs font-medium text-stone-600 bg-stone-100 px-3 py-1.5 rounded-full mb-6">
+          <i data-lucide="wheat-off" class="w-3.5 h-3.5"></i>
+          Community-powered GF discovery
+        </div>
+        <h1 class="text-5xl sm:text-6xl font-bold leading-[1.1] tracking-tight text-gray-900 mb-6">
+          Find gluten-free<br>you can trust.
+        </h1>
+        <p class="text-lg text-gray-500 leading-relaxed mb-8 max-w-[440px]">
+          Real recommendations from people with celiac and gluten sensitivity. Find restaurants and dishes that are genuinely safe to eat.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+          <a href="#cta" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-stone-800 text-white font-medium rounded-xl hover:bg-stone-700 transition-colors duration-200">
+            <i data-lucide="map-pin" class="w-4 h-4"></i>
+            Find GF Near Me
+          </a>
+          <a href="#how-it-works" class="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors duration-200">
+            How it works
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+        </div>
+        <p class="text-sm text-gray-400">Free to browse · No account required</p>
+      </div>
+
+      <!-- Phone mockup SVG -->
+      <div class="flex justify-center lg:justify-end">
+        <div class="w-full max-w-[260px]" style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.14));">
+          <svg viewBox="0 0 260 530" xmlns="http://www.w3.org/2000/svg" class="w-full">
+            <defs>
+              <clipPath id="screen">
+                <rect x="10" y="10" width="240" height="510" rx="26"/>
+              </clipPath>
+              <!-- Typing reveal mask -->
+              <clipPath id="typing-reveal">
+                <rect x="48" y="111" height="18" width="0">
+                  <animate attributeName="width" from="0" to="155" dur="1.4s" fill="freeze" begin="0.6s"/>
+                </rect>
+              </clipPath>
+            </defs>
+
+            <!-- Phone body -->
+            <rect x="0" y="0" width="260" height="530" rx="34" fill="#1c1917"/>
+            <rect x="2" y="2" width="256" height="526" rx="32" fill="#292524"/>
+
+            <!-- Screen bg -->
+            <rect x="10" y="10" width="240" height="510" rx="26" fill="#f8fafc"/>
+
+            <!-- All screen content clipped -->
+            <g clip-path="url(#screen)">
+
+              <!-- White header -->
+              <rect x="10" y="10" width="240" height="96" fill="white"/>
+
+              <!-- Dynamic island -->
+              <rect x="95" y="17" width="70" height="20" rx="10" fill="#1c1917"/>
+
+              <!-- App header row -->
+              <text x="22" y="75" font-family="Inter,sans-serif" font-size="15" font-weight="700" fill="#1c1917">GlutIt</text>
+              <!-- Location chip -->
+              <rect x="152" y="62" width="78" height="20" rx="6" fill="#f4f4f5"/>
+              <circle cx="163" cy="72" r="3.5" fill="none" stroke="#b45309" stroke-width="1.4"/>
+              <line x1="163" y1="74" x2="163" y2="77" stroke="#b45309" stroke-width="1.4" stroke-linecap="round"/>
+              <text x="170" y="76" font-family="Inter,sans-serif" font-size="9" fill="#78716c">Tel Aviv</text>
+
+              <!-- Search bar -->
+              <rect x="14" y="84" width="232" height="32" rx="9" fill="#f4f4f5"/>
+              <!-- Search icon -->
+              <circle cx="29" cy="100" r="5.5" fill="none" stroke="#a1a1aa" stroke-width="1.5"/>
+              <line x1="33" y1="104" x2="36.5" y2="107.5" stroke="#a1a1aa" stroke-width="1.5" stroke-linecap="round"/>
+              <!-- Typing text -->
+              <text x="48" y="105" font-family="Inter,sans-serif" font-size="11" fill="#71717a" clip-path="url(#typing-reveal)">GF pizza near me...</text>
+              <!-- Blinking cursor -->
+              <rect y="93" width="1.5" height="13" rx="1" fill="#b45309">
+                <animate attributeName="x" from="48" to="168" dur="1.4s" fill="freeze" begin="0.6s"/>
+                <animate attributeName="opacity" values="1;1;0;0;1;1;0;0" dur="0.9s" repeatCount="indefinite" begin="0.6s"/>
+              </rect>
+
+              <!-- Map background -->
+              <rect x="10" y="122" width="240" height="208" fill="#dde8dc"/>
+
+              <!-- Road grid – horizontal -->
+              <rect x="10" y="158" width="240" height="8"  fill="white" opacity="0.72"/>
+              <rect x="10" y="212" width="240" height="7"  fill="white" opacity="0.72"/>
+              <rect x="10" y="272" width="240" height="8"  fill="white" opacity="0.72"/>
+              <!-- Road grid – vertical -->
+              <rect x="62"  y="122" width="8"  height="208" fill="white" opacity="0.72"/>
+              <rect x="126" y="122" width="7"  height="208" fill="white" opacity="0.72"/>
+              <rect x="190" y="122" width="8"  height="208" fill="white" opacity="0.72"/>
+
+              <!-- City blocks -->
+              <rect x="17"  y="128" width="40" height="25" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="75"  y="128" width="46" height="25" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="138" y="128" width="46" height="25" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="202" y="128" width="38" height="25" rx="3" fill="#c4d0c3" opacity="0.65"/>
+
+              <rect x="17"  y="170" width="40" height="36" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="75"  y="170" width="46" height="36" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="138" y="170" width="46" height="36" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="202" y="170" width="38" height="36" rx="3" fill="#c4d0c3" opacity="0.65"/>
+
+              <rect x="17"  y="224" width="40" height="38" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="75"  y="224" width="46" height="38" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="138" y="224" width="46" height="38" rx="3" fill="#c4d0c3" opacity="0.75"/>
+              <rect x="202" y="224" width="38" height="38" rx="3" fill="#c4d0c3" opacity="0.65"/>
+
+              <!-- User location pulse -->
+              <circle cx="126" cy="212" r="14" fill="#3b82f6" opacity="0.1">
+                <animate attributeName="r" values="7;14;7" dur="2.2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.18;0.04;0.18" dur="2.2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="126" cy="212" r="5.5" fill="#3b82f6"/>
+              <circle cx="126" cy="212" r="2.2" fill="white"/>
+
+              <!-- Pin 1 – Bella Cucina -->
+              <g opacity="0">
+                <animate attributeName="opacity" from="0" to="1" dur="0.35s" fill="freeze" begin="1.8s"/>
+                <ellipse cx="86" cy="208" rx="6.5" ry="2.8" fill="#00000016"/>
+                <path d="M86 183 C86 183 74 194 74 202 C74 208.63 79.37 214 86 214 C92.63 214 98 208.63 98 202 C98 194 86 183 86 183Z" fill="#b45309"/>
+                <circle cx="86" cy="202" r="5.5" fill="white"/>
+                <text x="83.2" y="205.4" font-family="Inter,sans-serif" font-size="6" fill="#b45309" font-weight="700">GF</text>
+              </g>
+
+              <!-- Pin 2 – Verde -->
+              <g opacity="0">
+                <animate attributeName="opacity" from="0" to="1" dur="0.35s" fill="freeze" begin="2.25s"/>
+                <ellipse cx="156" cy="268" rx="6.5" ry="2.8" fill="#00000016"/>
+                <path d="M156 243 C156 243 144 254 144 262 C144 268.63 149.37 274 156 274 C162.63 274 168 268.63 168 262 C168 254 156 243 156 243Z" fill="#b45309"/>
+                <circle cx="156" cy="262" r="5.5" fill="white"/>
+                <text x="153.2" y="265.4" font-family="Inter,sans-serif" font-size="6" fill="#b45309" font-weight="700">GF</text>
+              </g>
+
+              <!-- Pin 3 – Taverna -->
+              <g opacity="0">
+                <animate attributeName="opacity" from="0" to="1" dur="0.35s" fill="freeze" begin="2.7s"/>
+                <ellipse cx="206" cy="186" rx="6.5" ry="2.8" fill="#00000016"/>
+                <path d="M206 161 C206 161 194 172 194 180 C194 186.63 199.37 192 206 192 C212.63 192 218 186.63 218 180 C218 172 206 161 206 161Z" fill="#b45309"/>
+                <circle cx="206" cy="180" r="5.5" fill="white"/>
+                <text x="203.2" y="183.4" font-family="Inter,sans-serif" font-size="6" fill="#b45309" font-weight="700">GF</text>
+              </g>
+
+              <!-- Result card -->
+              <g opacity="0">
+                <animateTransform attributeName="transform" type="translate" from="0,32" to="0,0"
+                  dur="0.48s" fill="freeze" begin="3.1s"
+                  calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+                <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="3.1s"/>
+
+                <!-- Card -->
+                <rect x="10" y="338" width="240" height="180" rx="0" fill="white"/>
+                <rect x="10" y="338" width="240" height="2" fill="#f1f1f1"/>
+
+                <!-- Drag handle -->
+                <rect x="110" y="346" width="40" height="3.5" rx="2" fill="#e4e4e7"/>
+
+                <!-- Name + meta -->
+                <text x="22" y="372" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#1c1917">Bella Cucina</text>
+                <text x="22" y="387" font-family="Inter,sans-serif" font-size="10.5" fill="#71717a">Italian · 0.4 km</text>
+                <!-- Stars -->
+                <text x="130" y="387" font-family="Inter,sans-serif" font-size="10" fill="#f59e0b">★★★★★</text>
+                <text x="180" y="387" font-family="Inter,sans-serif" font-size="10" fill="#9ca3af">4.8</text>
+
+                <!-- Divider -->
+                <line x1="22" y1="397" x2="238" y2="397" stroke="#f4f4f5" stroke-width="1"/>
+
+                <!-- Confidence label + percent -->
+                <text x="22" y="413" font-family="Inter,sans-serif" font-size="10.5" font-weight="500" fill="#57534e">GF Confidence</text>
+                <text x="208" y="413" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#b45309">87%</text>
+
+                <!-- Bar bg -->
+                <rect x="22" y="419" width="216" height="5.5" rx="2.75" fill="#f4f4f5"/>
+                <!-- Bar fill -->
+                <rect x="22" y="419" height="5.5" rx="2.75" fill="#b45309" width="0">
+                  <animate attributeName="width" from="0" to="188" dur="0.75s" fill="freeze" begin="3.7s"
+                    calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+                </rect>
+
+                <!-- Tags -->
+                <rect x="22"  y="433" width="54" height="18" rx="6" fill="#fef3c7"/>
+                <text x="31.5" y="445.5" font-family="Inter,sans-serif" font-size="9.5" fill="#92400e" font-weight="500">GF Menu</text>
+                <rect x="82"  y="433" width="66" height="18" rx="6" fill="#f0fdf4"/>
+                <text x="90"  y="445.5" font-family="Inter,sans-serif" font-size="9.5" fill="#15803d" font-weight="500">Ded. Fryer</text>
+
+                <!-- Review count -->
+                <text x="22" y="465" font-family="Inter,sans-serif" font-size="10" fill="#a1a1aa">142 community reviews</text>
+
+                <!-- CTA -->
+                <rect x="22" y="473" width="216" height="30" rx="9" fill="#1c1917"/>
+                <text x="74" y="492" font-family="Inter,sans-serif" font-size="11.5" font-weight="500" fill="white">View GF Dishes →</text>
+              </g>
+
+              <!-- Bottom bar overlay -->
+              <rect x="10" y="502" width="240" height="18" fill="white"/>
+              <rect x="90" y="509" width="80" height="4" rx="2" fill="#d4d4d8"/>
+
+            </g><!-- /clip -->
+
+            <!-- Phone bezel caps (top + bottom) -->
+            <rect x="0" y="0"   width="260" height="18" rx="34" fill="#1c1917"/>
+            <rect x="0" y="512" width="260" height="18" rx="0"  fill="#1c1917"/>
+            <rect x="0" y="512" width="260" height="18" rx="34" fill="#1c1917"/>
+
+            <!-- Side buttons -->
+            <rect x="258" y="128" width="4" height="54" rx="2" fill="#292524"/>
+            <rect x="-2"  y="110" width="4" height="36" rx="2" fill="#292524"/>
+            <rect x="-2"  y="156" width="4" height="36" rx="2" fill="#292524"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ──────────────────────────────────────── -->
+  <section id="how-it-works" class="py-24 bg-stone-50 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16 fade-up">
+        <h2 class="text-3xl font-bold tracking-tight mb-3">How it works</h2>
+        <p class="text-gray-500 max-w-md mx-auto">Three steps to eating out without the stress.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+        <div class="fade-up">
+          <div class="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center mb-5">
+            <i data-lucide="map-pin" class="w-5 h-5 text-white"></i>
+          </div>
+          <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">01</p>
+          <h3 class="text-lg font-semibold mb-2">Search your area</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Open GlutIt, share your location or search any city, and see GF-verified spots on the map instantly.</p>
+        </div>
+
+        <div class="fade-up" style="transition-delay:0.1s">
+          <div class="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center mb-5">
+            <i data-lucide="users" class="w-5 h-5 text-white"></i>
+          </div>
+          <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">02</p>
+          <h3 class="text-lg font-semibold mb-2">Read community reviews</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Browse dish-level reports from people with celiac and gluten sensitivity — not generic restaurant ratings.</p>
+        </div>
+
+        <div class="fade-up" style="transition-delay:0.2s">
+          <div class="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center mb-5">
+            <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+          </div>
+          <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">03</p>
+          <h3 class="text-lg font-semibold mb-2">Eat with confidence</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Each place has a GF confidence score. See cross-contamination flags and dedicated fryer info before you order.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ──────────────────────────────────────────── -->
+  <section id="features" class="py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16 fade-up">
+        <h2 class="text-3xl font-bold tracking-tight mb-3">Built for the GF community</h2>
+        <p class="text-gray-500 max-w-md mx-auto">Every feature designed around the real needs of people living gluten-free.</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <div class="fade-up feature-card p-6 border border-gray-100 rounded-2xl">
+          <i data-lucide="map" class="w-5 h-5 text-stone-500 mb-4"></i>
+          <h3 class="font-semibold mb-2">Map discovery</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Browse an interactive map of GF-friendly spots nearby or in any city worldwide.</p>
+        </div>
+
+        <div class="fade-up feature-card p-6 border border-gray-100 rounded-2xl" style="transition-delay:0.05s">
+          <i data-lucide="message-circle" class="w-5 h-5 text-stone-500 mb-4"></i>
+          <h3 class="font-semibold mb-2">Community reviews</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Experiences from real people who eat GF every day, not AI-generated summaries.</p>
+        </div>
+
+        <div class="fade-up feature-card p-6 border border-gray-100 rounded-2xl" style="transition-delay:0.1s">
+          <i data-lucide="filter" class="w-5 h-5 text-stone-500 mb-4"></i>
+          <h3 class="font-semibold mb-2">Dish-level filters</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Filter by specific dish, not just restaurant. Find exactly what's safe to order on any menu.</p>
+        </div>
+
+        <div class="fade-up feature-card p-6 border border-gray-100 rounded-2xl" style="transition-delay:0.15s">
+          <i data-lucide="bar-chart-2" class="w-5 h-5 text-stone-500 mb-4"></i>
+          <h3 class="font-semibold mb-2">Confidence score</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">A trust score per venue based on aggregated reports, recency, and cross-contamination data.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ──────────────────────────────────────── -->
+  <section id="testimonials" class="py-24 bg-stone-50 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16 fade-up">
+        <h2 class="text-3xl font-bold tracking-tight mb-3">From the community</h2>
+        <p class="text-gray-500 max-w-md mx-auto">People who eat gluten-free every single day.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="fade-up bg-white p-6 rounded-2xl border border-gray-100">
+          <div class="flex gap-0.5 mb-4">
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed mb-5">"Traveling used to mean stress and hunger. GlutIt found me a safe restaurant within 10 minutes in a city I'd never been to. That's not nothing."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-xs font-semibold text-stone-600">SA</div>
+            <div>
+              <p class="text-sm font-medium">Sarah A.</p>
+              <p class="text-xs text-gray-400">Celiac, diagnosed 2019</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="fade-up bg-white p-6 rounded-2xl border border-gray-100" style="transition-delay:0.1s">
+          <div class="flex gap-0.5 mb-4">
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed mb-5">"The confidence score is what I didn't know I needed. Seeing 90% from 60+ reviewers beats any 'GF options available' badge on a Google listing."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-xs font-semibold text-stone-600">DM</div>
+            <div>
+              <p class="text-sm font-medium">Daniel M.</p>
+              <p class="text-xs text-gray-400">Gluten sensitivity</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="fade-up bg-white p-6 rounded-2xl border border-gray-100" style="transition-delay:0.2s">
+          <div class="flex gap-0.5 mb-4">
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+            <i data-lucide="star" class="w-4 h-4 text-amber-400" style="fill:currentColor"></i>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed mb-5">"I stopped interrogating waiters before every meal. I check GlutIt, see what's safe, and order. Sounds small — it changed how eating out feels."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-xs font-semibold text-stone-600">NR</div>
+            <div>
+              <p class="text-sm font-medium">Noa R.</p>
+              <p class="text-xs text-gray-400">Celiac, 8 years</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA BANNER ────────────────────────────────────────── -->
+  <section id="cta" class="py-24 px-6">
+    <div class="max-w-xl mx-auto text-center fade-up">
+      <h2 class="text-3xl font-bold tracking-tight mb-4">Ready to eat out without the worry?</h2>
+      <p class="text-gray-500 mb-8 leading-relaxed">Join the community finding places worth trusting.</p>
+      <a href="#" class="inline-flex items-center gap-2 px-8 py-3.5 bg-stone-800 text-white font-medium rounded-xl hover:bg-stone-700 transition-colors duration-200 text-base">
+        <i data-lucide="map-pin" class="w-5 h-5"></i>
+        Get Early Access
+      </a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────── -->
+  <footer class="border-t border-gray-100 py-12 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div>
+        <p class="font-bold text-lg tracking-tight mb-1">GlutIt</p>
+        <p class="text-sm text-gray-400">Find gluten-free you can trust.</p>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-gray-400">
+        <a href="#" class="hover:text-gray-600 transition-colors">Privacy</a>
+        <a href="#" class="hover:text-gray-600 transition-colors">Terms</a>
+        <a href="#" class="hover:text-gray-600 transition-colors">Contact</a>
+      </div>
+      <p class="text-sm text-gray-300">© 2026 GlutIt</p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
