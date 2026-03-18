@@ -169,7 +169,7 @@
 
       <!-- Actions -->
       <div class="px-4 pb-4 flex gap-2">
-        <button id="card-directions" class="flex-1 flex items-center justify-center gap-1.5 bg-[#00B4D8] text-white text-sm font-medium py-2.5 rounded-xl hover:bg-[#48CAE4] active:bg-[#0096C7] transition-colors">
+        <button id="card-directions" class="flex-1 flex items-center justify-center gap-1.5 bg-[#0284C7] text-white text-sm font-medium py-2.5 rounded-xl hover:bg-[#0369A1] active:bg-[#0369A1] transition-colors">
           <i data-lucide="navigation" class="w-4 h-4"></i>
           Directions
         </button>
@@ -298,7 +298,7 @@
 
   // ── Marker icons ─────────────────────────────────────────────
   function pinIcon(active = false) {
-    const fill  = active ? '#0096C7' : '#ADE8F4';
+    const fill  = active ? '#0369A1' : '#ADE8F4';
     const ring  = active ? '#E0F7FC' : 'white';
     const scale = active ? 1.2 : 1;
     return L.divIcon({
@@ -340,7 +340,7 @@
       const active = btn.dataset.filter === filter;
       btn.className = `filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150 ${
         active
-          ? 'bg-[#00B4D8] text-white border-[#00B4D8] shadow-sm'
+          ? 'bg-[#0284C7] text-white border-[#0284C7] shadow-sm'
           : 'bg-white text-gray-500 border-gray-200 hover:border-[#ADE8F4] hover:text-[#0077B6]'
       }`;
     });
