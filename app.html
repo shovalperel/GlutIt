@@ -97,6 +97,12 @@
         </div>
       </div>
 
+      <!-- Community badge -->
+      <div class="pointer-events-auto hidden sm:flex items-center gap-1.5 bg-white border border-gray-100 rounded-xl shadow-sm px-3 py-2 text-xs text-gray-500">
+        <i data-lucide="message-circle" class="w-3.5 h-3.5 text-[#ADE8F4]"></i>
+        Community powered
+      </div>
+
       <!-- Row 2: filter pills -->
       <div class="pointer-events-auto flex items-center gap-1.5 flex-wrap">
         <button data-filter="all"             class="filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150">All</button>
@@ -191,96 +197,96 @@
   // ── Tailwind config ─────────────────────────────────────────
   tailwind.config = { theme: { extend: {} } };
 
-  // ── Mock data ────────────────────────────────────────────────
+  // ── Community data — sourced from "גלוטן לי לבד" WhatsApp group ──
   const RESTAURANTS = [
     {
-      id: 1, name: "Pasta & Co.", city: "Tel Aviv", category: "full_restaurant",
-      lat: 32.0853, lng: 34.7818, rating: 4.2, reviews: 128, confidence: 87,
-      tags: ["Dedicated kitchen", "Celiac-safe"], reports: 43,
+      id: 1, name: "קפה ללו", city: "Tel Aviv", category: "bakery",
+      lat: 32.0872, lng: 34.7848, rating: 4.8, reviews: 214, confidence: 96,
+      tags: ["100% GF", "Celiac-safe", "GF challahs to go"], reports: 89,
       quotes: [
-        { text: "Best GF pasta I've had in Israel.", author: "Noa L." },
-        { text: "Staff understood celiac — no eye-rolling.", author: "Maya K." }
+        { text: "Everything is GF. Incredible sandwiches, pastries, even frozen challahs to bake at home.", author: "Sean G." },
+        { text: "One of my favourite places in TLV. You can order literally anything.", author: "Lihi" }
       ]
     },
     {
-      id: 2, name: "Levinsky Bakery GF", city: "Tel Aviv", category: "bakery",
-      lat: 32.0555, lng: 34.7595, rating: 4.7, reviews: 89, confidence: 94,
-      tags: ["100% GF", "Celiac-safe"], reports: 67,
+      id: 2, name: "CRAVE", city: "Jerusalem", category: "full_restaurant",
+      lat: 31.7849, lng: 35.2125, rating: 4.6, reviews: 178, confidence: 84,
+      tags: ["GF menu", "Market location"], reports: 61,
       quotes: [
-        { text: "Finally a real sourdough that doesn't crumble.", author: "Dana R." },
-        { text: "Croissants are unreal. Zero gluten, all the joy.", author: "Oren B." }
+        { text: "CRAVE!!! Best GF option in Machane Yehuda, hands down.", author: "Maayan" },
+        { text: "Always go there when I'm at the market. Never had an issue.", author: "Abigail" }
       ]
     },
     {
-      id: 3, name: "Pizza Buona", city: "Tel Aviv", category: "pizza",
-      lat: 32.0742, lng: 34.7741, rating: 4.0, reviews: 74, confidence: 78,
-      tags: ["GF crust available", "Separate tray"], reports: 31,
+      id: 3, name: "טייגר לילי", city: "Tel Aviv", category: "full_restaurant",
+      lat: 32.0717, lng: 34.7913, rating: 4.2, reviews: 93, confidence: 81,
+      tags: ["GF options marked", "Sarona Market"], reports: 37,
       quotes: [
-        { text: "Thin crust GF option — actually crispy!", author: "Shira T." },
-        { text: "They use a separate oven. Felt very safe.", author: "Amit D." }
+        { text: "Ate there several times at Sarona with GF options — not a single mistake ever.", author: "Itai H." },
+        { text: "The only place at Sarona Market I actually trust for GF.", author: "OR" }
       ]
     },
     {
-      id: 4, name: "HaShuk Kitchen", city: "Jerusalem", category: "full_restaurant",
-      lat: 31.7830, lng: 35.2235, rating: 4.3, reviews: 56, confidence: 81,
-      tags: ["GF menu", "Allergy-aware staff"], reports: 29,
+      id: 4, name: "Starving", city: "Beit Oved", category: "full_restaurant",
+      lat: 31.8940, lng: 34.8240, rating: 4.7, reviews: 142, confidence: 92,
+      tags: ["Dedicated GF station", "Clean fryer", "All sauces GF"], reports: 74,
       quotes: [
-        { text: "Half the menu is naturally GF. Heaven.", author: "Yael M." },
-        { text: "Waiter knew exactly what I needed.", author: "Tom G." }
+        { text: "Dedicated GF prep lane! Chips fried clean, all sauces GF. Ate in peace for the first time.", author: "Ben" },
+        { text: "Amazing place, great design, good price — and they actually get what celiac means.", author: "Maayan" }
       ]
     },
     {
-      id: 5, name: "Tmol Shilshom Café", city: "Jerusalem", category: "full_restaurant",
-      lat: 31.7800, lng: 35.2180, rating: 4.5, reviews: 112, confidence: 76,
-      tags: ["GF options marked", "Cozy atmosphere"], reports: 44,
+      id: 5, name: "בלי קמח", city: "Tel Aviv", category: "bakery",
+      lat: 32.0800, lng: 34.7820, rating: 4.9, reviews: 187, confidence: 98,
+      tags: ["100% GF bakery", "Celiac-safe"], reports: 102,
       quotes: [
-        { text: "Literary café with great GF cake. Perfect combo.", author: "Lihi A." },
-        { text: "Always check with staff — they're super helpful.", author: "Ronen S." }
+        { text: "Nothing I ordered was a disappointment. Everything is worth it.", author: "Raz P." },
+        { text: "The only 100% GF bakery I know. A bit pricey but absolutely worth every shekel.", author: "Shahar" }
       ]
     },
     {
-      id: 6, name: "Abulafia GF Corner", city: "Jaffa", category: "bakery",
-      lat: 32.0505, lng: 34.7530, rating: 3.9, reviews: 43, confidence: 72,
-      tags: ["GF pita", "Separate prep area"], reports: 18,
+      id: 6, name: "פיורי", city: "Jerusalem", category: "full_restaurant",
+      lat: 31.7765, lng: 35.2250, rating: 4.3, reviews: 67, confidence: 79,
+      tags: ["GF pasta", "Italian"], reports: 28,
       quotes: [
-        { text: "GF pita that actually tastes like pita.", author: "Einav P." },
-        { text: "Worth the trip to Jaffa just for the GF ka'ak.", author: "Barak N." }
+        { text: "I'm at Fiori in Jerusalem eating GF pasta as I type this. Life is good.", author: "Adi D." },
+        { text: "Real Italian GF pasta in Jerusalem — didn't think I'd ever say that.", author: "Community" }
       ]
     },
     {
-      id: 7, name: "Dado Beach Bistro", city: "Haifa", category: "full_restaurant",
-      lat: 32.8156, lng: 34.9595, rating: 4.4, reviews: 67, confidence: 85,
-      tags: ["Dedicated fryer", "Celiac-safe"], reports: 38,
+      id: 7, name: "גולדה גלידה", city: "Tel Aviv", category: "bakery",
+      lat: 32.0660, lng: 34.7765, rating: 4.1, reviews: 156, confidence: 71,
+      tags: ["GF cones", "Multiple branches"], reports: 48,
       quotes: [
-        { text: "Fresh fish, GF sides, ocean view. What more?", author: "Michal H." },
-        { text: "Kitchen was very transparent about prep.", author: "Gal W." }
+        { text: "Amazing GF cones at Golda — been to Bat Yam and Ashdod branches, same quality everywhere.", author: "Yoni" },
+        { text: "Just ask for a clean spoon. They understand and always oblige.", author: "Hila K." }
       ]
     },
     {
-      id: 8, name: "Hanamal 24", city: "Haifa", category: "pizza",
-      lat: 32.8220, lng: 34.9999, rating: 4.1, reviews: 51, confidence: 79,
-      tags: ["GF crust", "Wood-fired oven"], reports: 22,
+      id: 8, name: "אורבן שמאן", city: "Tel Aviv", category: "full_restaurant",
+      lat: 32.0685, lng: 34.7895, rating: 4.5, reviews: 119, confidence: 95,
+      tags: ["100% GF", "Fully vegan", "Celiac-safe"], reports: 83,
       quotes: [
-        { text: "Wood-fired GF pizza at the port — stunning.", author: "Nir C." },
-        { text: "A bit pricey but zero complaints on safety.", author: "Sarit Y." }
+        { text: "All vegan AND gluten-free. A dream café for people like us.", author: "Hila K." },
+        { text: "Finally a place where I don't have to interrogate the waiter about every dish.", author: "Maya" }
       ]
     },
     {
-      id: 9, name: "Tiberias Garden", city: "Tiberias", category: "full_restaurant",
-      lat: 32.7940, lng: 35.5300, rating: 4.0, reviews: 38, confidence: 74,
-      tags: ["GF menu on request", "Lake view"], reports: 15,
+      id: 9, name: "פפיטוס", city: "Jerusalem", category: "bakery",
+      lat: 31.7843, lng: 35.2130, rating: 4.4, reviews: 88, confidence: 87,
+      tags: ["GF corn pita", "Market stall"], reports: 52,
       quotes: [
-        { text: "Beautiful setting, very accommodating staff.", author: "Hila F." },
-        { text: "Saint Peter's fish — naturally GF and excellent.", author: "Doron A." }
+        { text: "The only place in Machane Yehuda with real GF corn pitas. A total lifesaver.", author: "Abigail" },
+        { text: "If you're in the market and need GF — Pepitos, period. Nothing else compares.", author: "Maayan" }
       ]
     },
     {
-      id: 10, name: "Eilat Reef Kitchen", city: "Eilat", category: "full_restaurant",
-      lat: 29.5577, lng: 34.9519, rating: 4.6, reviews: 91, confidence: 91,
-      tags: ["100% GF", "Dedicated kitchen", "Celiac-safe"], reports: 57,
+      id: 10, name: "הלופט", city: "Tel Aviv", category: "full_restaurant",
+      lat: 32.0695, lng: 34.7752, rating: 4.6, reviews: 104, confidence: 88,
+      tags: ["Dedicated celiac menu", "Celiac-safe"], reports: 66,
       quotes: [
-        { text: "Traveled from TLV — worth every km.", author: "Adi V." },
-        { text: "First time I ate out without fear. Life-changing.", author: "Ronit Z." }
+        { text: "5 metres from Soho market, insanely good food AND a dedicated celiac menu!", author: "Maayan" },
+        { text: "Strongly recommended. The staff know exactly what celiac means.", author: "Community" }
       ]
     }
   ];
