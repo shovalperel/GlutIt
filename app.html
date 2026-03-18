@@ -71,7 +71,7 @@
         <!-- Logo -->
         <a href="index.html" class="pointer-events-auto flex-shrink-0 bg-white border border-gray-100 rounded-xl shadow-sm px-3 py-2 flex items-center gap-1.5 hover:bg-stone-50 transition-colors">
           <span class="text-[#0077B6] font-bold text-sm tracking-tight">GlutIt</span>
-          <i data-lucide="map" class="w-3.5 h-3.5 text-[#90E0EF]"></i>
+          <i data-lucide="map" class="w-3.5 h-3.5 text-[#ADE8F4]"></i>
         </a>
 
         <!-- Search -->
@@ -122,7 +122,7 @@
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
             <h2 id="card-name" class="text-base font-semibold text-gray-900 truncate"></h2>
-            <span id="card-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-[#CAF0F8] text-[#0077B6] border border-[#ADE8F4] flex-shrink-0"></span>
+            <span id="card-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-[#E0F7FC] text-[#0077B6] border border-[#CAF0F8] flex-shrink-0"></span>
           </div>
           <p id="card-city" class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
             <i data-lucide="map-pin" class="w-3 h-3"></i>
@@ -146,7 +146,7 @@
       <!-- Crowd Voice -->
       <div class="px-4 py-3">
         <div class="flex items-center gap-1.5 mb-2.5">
-          <i data-lucide="message-circle" class="w-3.5 h-3.5 text-[#90E0EF]"></i>
+          <i data-lucide="message-circle" class="w-3.5 h-3.5 text-[#ADE8F4]"></i>
           <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Crowd Voice</span>
         </div>
         <div id="card-quotes" class="flex flex-col gap-2"></div>
@@ -161,7 +161,7 @@
           <span id="card-conf-val" class="text-xs font-bold text-[#0077B6]"></span>
         </div>
         <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-          <div id="card-confidence-bar" class="h-full bg-[#90E0EF] rounded-full"></div>
+          <div id="card-confidence-bar" class="h-full bg-[#ADE8F4] rounded-full"></div>
         </div>
         <div id="card-tags" class="flex flex-wrap gap-1.5 mt-2.5"></div>
         <p id="card-reports" class="text-xs text-gray-400 mt-1.5"></p>
@@ -298,8 +298,8 @@
 
   // ── Marker icons ─────────────────────────────────────────────
   function pinIcon(active = false) {
-    const fill  = active ? '#0096C7' : '#90E0EF';
-    const ring  = active ? '#CAF0F8' : 'white';
+    const fill  = active ? '#0096C7' : '#ADE8F4';
+    const ring  = active ? '#E0F7FC' : 'white';
     const scale = active ? 1.2 : 1;
     return L.divIcon({
       className: '',
@@ -341,7 +341,7 @@
       btn.className = `filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150 ${
         active
           ? 'bg-[#00B4D8] text-white border-[#00B4D8] shadow-sm'
-          : 'bg-white text-gray-500 border-gray-200 hover:border-[#90E0EF] hover:text-[#0077B6]'
+          : 'bg-white text-gray-500 border-gray-200 hover:border-[#ADE8F4] hover:text-[#0077B6]'
       }`;
     });
 
@@ -386,7 +386,7 @@
     searchList.innerHTML = hits.length
       ? hits.map(r => `
           <div data-id="${r.id}" class="search-item flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 cursor-pointer transition-colors border-b border-gray-50 last:border-0">
-            <div class="w-7 h-7 rounded-lg bg-[#CAF0F8] flex items-center justify-center flex-shrink-0 border border-[#ADE8F4]">
+            <div class="w-7 h-7 rounded-lg bg-[#E0F7FC] flex items-center justify-center flex-shrink-0 border border-[#CAF0F8]">
               <span class="text-xs font-bold text-[#0077B6]">GF</span>
             </div>
             <div class="flex-1 min-w-0">
@@ -465,7 +465,7 @@
       </div>`).join('');
 
     document.getElementById('card-tags').innerHTML = r.tags.map(t => `
-      <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-[#CAF0F8] text-[#0077B6] border border-[#ADE8F4]">${t}</span>`).join('');
+      <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-[#E0F7FC] text-[#0077B6] border border-[#CAF0F8]">${t}</span>`).join('');
 
     // Directions link
     document.getElementById('card-directions').onclick = () => {
