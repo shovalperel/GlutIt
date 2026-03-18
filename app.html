@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlutIt – Find Gluten-Free Places</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+
+    /* Map */
+    #map { position: fixed; inset: 0; z-index: 0; }
+    .leaflet-control-zoom { border: none !important; box-shadow: 0 1px 4px rgba(0,0,0,0.12) !important; }
+    .leaflet-control-zoom a {
+      font-family: 'Inter', sans-serif !important;
+      color: #374151 !important;
+      border-color: #f3f4f6 !important;
+    }
+    .leaflet-control-zoom a:hover { background: #f9fafb !important; }
+    .leaflet-control-attribution { font-size: 10px; opacity: 0.6; }
+
+    /* Card panel slide */
+    #card-panel {
+      transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+      transform: translateY(calc(100% + 20px));
+    }
+    #card-panel.open { transform: translateY(0); }
+
+    /* Search dropdown */
+    #search-dropdown { display: none; }
+    #search-dropdown.show { display: block; }
+
+    /* Confidence bar */
+    #card-confidence-bar {
+      width: 0%;
+      transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Scrollbar */
+    .no-scroll::-webkit-scrollbar { display: none; }
+    .no-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Marker pulse for active */
+    @keyframes markerPulse {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    .marker-active-el { animation: markerPulse 0.35s ease; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Full-screen map ─────────────────────────────────── -->
+  <div id="map"></div>
+
+  <!-- ── Top floating bar ───────────────────────────────── -->
+  <div class="fixed top-0 left-0 right-0 z-10 pointer-events-none">
+    <div class="p-3 sm:p-4 flex flex-col gap-2">
+
+      <!-- Row 1: logo + search -->
+      <div class="flex items-center gap-2">
+
+        <!-- Logo -->
+        <a href="index.html" class="pointer-events-auto flex-shrink-0 bg-white border border-gray-100 rounded-xl shadow-sm px-3 py-2 flex items-center gap-1.5 hover:bg-stone-50 transition-colors">
+          <span class="text-amber-700 font-bold text-sm tracking-tight">GlutIt</span>
+          <i data-lucide="map" class="w-3.5 h-3.5 text-amber-700"></i>
+        </a>
+
+        <!-- Search -->
+        <div class="pointer-events-auto flex-1 max-w-lg relative">
+          <div class="bg-white border border-gray-100 rounded-xl shadow-sm flex items-center gap-2 px-3 py-2">
+            <i data-lucide="search" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Search restaurants or cities…"
+              autocomplete="off"
+              class="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent min-w-0"
+            />
+            <button id="search-clear" class="hidden text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Dropdown -->
+          <div id="search-dropdown" class="absolute top-full mt-1.5 left-0 right-0 bg-white border border-gray-100 rounded-xl shadow-md overflow-hidden z-20">
+            <div id="search-list" class="max-h-60 overflow-y-auto no-scroll"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: filter pills -->
+      <div class="pointer-events-auto flex items-center gap-1.5 flex-wrap">
+        <button data-filter="all"             class="filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150">All</button>
+        <button data-filter="full_restaurant" class="filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150">Restaurant</button>
+        <button data-filter="bakery"          class="filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150">Bakery</button>
+        <button data-filter="pizza"           class="filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150">Pizza</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Restaurant card (bottom sheet / desktop panel) ──── -->
+  <div id="card-panel" class="fixed bottom-0 left-0 right-0 z-20 sm:left-auto sm:right-4 sm:bottom-4 sm:w-[380px]">
+    <div class="bg-white rounded-t-2xl sm:rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
+
+      <!-- Drag handle (mobile) -->
+      <div class="flex justify-center pt-3 pb-1 sm:hidden">
+        <div class="w-8 h-1 bg-gray-200 rounded-full"></div>
+      </div>
+
+      <!-- Header -->
+      <div class="flex items-start justify-between px-4 pt-3 pb-2">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 id="card-name" class="text-base font-semibold text-gray-900 truncate"></h2>
+            <span id="card-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex-shrink-0"></span>
+          </div>
+          <p id="card-city" class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span></span>
+          </p>
+        </div>
+        <button id="card-close" class="ml-3 flex-shrink-0 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+
+      <!-- Rating -->
+      <div class="px-4 pb-3 flex items-center gap-2">
+        <div id="card-stars" class="flex items-center gap-0.5"></div>
+        <span id="card-rating" class="text-sm font-semibold text-gray-800"></span>
+        <span id="card-reviews" class="text-xs text-gray-400"></span>
+      </div>
+
+      <div class="mx-4 border-t border-gray-100"></div>
+
+      <!-- Crowd Voice -->
+      <div class="px-4 py-3">
+        <div class="flex items-center gap-1.5 mb-2.5">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5 text-amber-700"></i>
+          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Crowd Voice</span>
+        </div>
+        <div id="card-quotes" class="flex flex-col gap-2"></div>
+      </div>
+
+      <div class="mx-4 border-t border-gray-100"></div>
+
+      <!-- GF Confidence -->
+      <div class="px-4 py-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium text-gray-600">GF Confidence</span>
+          <span id="card-conf-val" class="text-xs font-bold text-amber-700"></span>
+        </div>
+        <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div id="card-confidence-bar" class="h-full bg-amber-600 rounded-full"></div>
+        </div>
+        <div id="card-tags" class="flex flex-wrap gap-1.5 mt-2.5"></div>
+        <p id="card-reports" class="text-xs text-gray-400 mt-1.5"></p>
+      </div>
+
+      <!-- Actions -->
+      <div class="px-4 pb-4 flex gap-2">
+        <button id="card-directions" class="flex-1 flex items-center justify-center gap-1.5 bg-stone-800 text-white text-sm font-medium py-2.5 rounded-xl hover:bg-stone-700 active:bg-stone-900 transition-colors">
+          <i data-lucide="navigation" class="w-4 h-4"></i>
+          Directions
+        </button>
+        <button class="flex items-center justify-center border border-gray-200 text-gray-600 py-2.5 px-3.5 rounded-xl hover:bg-gray-50 transition-colors">
+          <i data-lucide="share-2" class="w-4 h-4"></i>
+        </button>
+        <button class="flex items-center justify-center border border-gray-200 text-gray-600 py-2.5 px-3.5 rounded-xl hover:bg-gray-50 transition-colors">
+          <i data-lucide="bookmark" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCRIPT
+  ═══════════════════════════════════════════════════════════ -->
+  <script>
+  // ── Tailwind config ─────────────────────────────────────────
+  tailwind.config = { theme: { extend: {} } };
+
+  // ── Mock data ────────────────────────────────────────────────
+  const RESTAURANTS = [
+    {
+      id: 1, name: "Pasta & Co.", city: "Tel Aviv", category: "full_restaurant",
+      lat: 32.0853, lng: 34.7818, rating: 4.2, reviews: 128, confidence: 87,
+      tags: ["Dedicated kitchen", "Celiac-safe"], reports: 43,
+      quotes: [
+        { text: "Best GF pasta I've had in Israel.", author: "Noa L." },
+        { text: "Staff understood celiac — no eye-rolling.", author: "Maya K." }
+      ]
+    },
+    {
+      id: 2, name: "Levinsky Bakery GF", city: "Tel Aviv", category: "bakery",
+      lat: 32.0555, lng: 34.7595, rating: 4.7, reviews: 89, confidence: 94,
+      tags: ["100% GF", "Celiac-safe"], reports: 67,
+      quotes: [
+        { text: "Finally a real sourdough that doesn't crumble.", author: "Dana R." },
+        { text: "Croissants are unreal. Zero gluten, all the joy.", author: "Oren B." }
+      ]
+    },
+    {
+      id: 3, name: "Pizza Buona", city: "Tel Aviv", category: "pizza",
+      lat: 32.0742, lng: 34.7741, rating: 4.0, reviews: 74, confidence: 78,
+      tags: ["GF crust available", "Separate tray"], reports: 31,
+      quotes: [
+        { text: "Thin crust GF option — actually crispy!", author: "Shira T." },
+        { text: "They use a separate oven. Felt very safe.", author: "Amit D." }
+      ]
+    },
+    {
+      id: 4, name: "HaShuk Kitchen", city: "Jerusalem", category: "full_restaurant",
+      lat: 31.7830, lng: 35.2235, rating: 4.3, reviews: 56, confidence: 81,
+      tags: ["GF menu", "Allergy-aware staff"], reports: 29,
+      quotes: [
+        { text: "Half the menu is naturally GF. Heaven.", author: "Yael M." },
+        { text: "Waiter knew exactly what I needed.", author: "Tom G." }
+      ]
+    },
+    {
+      id: 5, name: "Tmol Shilshom Café", city: "Jerusalem", category: "full_restaurant",
+      lat: 31.7800, lng: 35.2180, rating: 4.5, reviews: 112, confidence: 76,
+      tags: ["GF options marked", "Cozy atmosphere"], reports: 44,
+      quotes: [
+        { text: "Literary café with great GF cake. Perfect combo.", author: "Lihi A." },
+        { text: "Always check with staff — they're super helpful.", author: "Ronen S." }
+      ]
+    },
+    {
+      id: 6, name: "Abulafia GF Corner", city: "Jaffa", category: "bakery",
+      lat: 32.0505, lng: 34.7530, rating: 3.9, reviews: 43, confidence: 72,
+      tags: ["GF pita", "Separate prep area"], reports: 18,
+      quotes: [
+        { text: "GF pita that actually tastes like pita.", author: "Einav P." },
+        { text: "Worth the trip to Jaffa just for the GF ka'ak.", author: "Barak N." }
+      ]
+    },
+    {
+      id: 7, name: "Dado Beach Bistro", city: "Haifa", category: "full_restaurant",
+      lat: 32.8156, lng: 34.9595, rating: 4.4, reviews: 67, confidence: 85,
+      tags: ["Dedicated fryer", "Celiac-safe"], reports: 38,
+      quotes: [
+        { text: "Fresh fish, GF sides, ocean view. What more?", author: "Michal H." },
+        { text: "Kitchen was very transparent about prep.", author: "Gal W." }
+      ]
+    },
+    {
+      id: 8, name: "Hanamal 24", city: "Haifa", category: "pizza",
+      lat: 32.8220, lng: 34.9999, rating: 4.1, reviews: 51, confidence: 79,
+      tags: ["GF crust", "Wood-fired oven"], reports: 22,
+      quotes: [
+        { text: "Wood-fired GF pizza at the port — stunning.", author: "Nir C." },
+        { text: "A bit pricey but zero complaints on safety.", author: "Sarit Y." }
+      ]
+    },
+    {
+      id: 9, name: "Tiberias Garden", city: "Tiberias", category: "full_restaurant",
+      lat: 32.7940, lng: 35.5300, rating: 4.0, reviews: 38, confidence: 74,
+      tags: ["GF menu on request", "Lake view"], reports: 15,
+      quotes: [
+        { text: "Beautiful setting, very accommodating staff.", author: "Hila F." },
+        { text: "Saint Peter's fish — naturally GF and excellent.", author: "Doron A." }
+      ]
+    },
+    {
+      id: 10, name: "Eilat Reef Kitchen", city: "Eilat", category: "full_restaurant",
+      lat: 29.5577, lng: 34.9519, rating: 4.6, reviews: 91, confidence: 91,
+      tags: ["100% GF", "Dedicated kitchen", "Celiac-safe"], reports: 57,
+      quotes: [
+        { text: "Traveled from TLV — worth every km.", author: "Adi V." },
+        { text: "First time I ate out without fear. Life-changing.", author: "Ronit Z." }
+      ]
+    }
+  ];
+
+  // ── Map init ─────────────────────────────────────────────────
+  const map = L.map('map', { zoomControl: false }).setView([31.8, 35.0], 8);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19
+  }).addTo(map);
+
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+  // ── Marker icons ─────────────────────────────────────────────
+  function pinIcon(active = false) {
+    const fill  = active ? '#92400e' : '#b45309';
+    const ring  = active ? '#fef3c7' : 'white';
+    const scale = active ? 1.2 : 1;
+    return L.divIcon({
+      className: '',
+      html: `<div style="transform:scale(${scale});transform-origin:50% 100%;transition:transform .2s;" ${active ? 'class="marker-active-el"' : ''}>
+        <svg width="34" height="42" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 0C7.611 0 0 7.611 0 17c0 11.314 17 25 17 25S34 28.314 34 17C34 7.611 26.389 0 17 0z" fill="${fill}"/>
+          <circle cx="17" cy="17" r="8" fill="${ring}"/>
+          <text x="17" y="21" text-anchor="middle" font-size="7.5" font-weight="700" fill="${fill}" font-family="Inter,sans-serif">GF</text>
+        </svg>
+      </div>`,
+      iconSize: [34, 42],
+      iconAnchor: [17, 42],
+      popupAnchor: [0, -44]
+    });
+  }
+
+  // ── Place markers ────────────────────────────────────────────
+  const markerMap = {};   // id → { leafletMarker, data }
+  let activeId    = null;
+  let activeFilter = 'all';
+
+  RESTAURANTS.forEach(r => {
+    const m = L.marker([r.lat, r.lng], { icon: pinIcon() })
+      .addTo(map)
+      .on('click', () => {
+        map.panTo([r.lat, r.lng], { animate: true, duration: 0.5 });
+        openCard(r);
+      });
+    markerMap[r.id] = { m, data: r };
+  });
+
+  // ── Filter pills ─────────────────────────────────────────────
+  function setFilter(filter) {
+    activeFilter = filter;
+
+    // Pills styling
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      const active = btn.dataset.filter === filter;
+      btn.className = `filter-pill text-xs font-medium px-3 py-1.5 rounded-full border transition-all duration-150 ${
+        active
+          ? 'bg-amber-700 text-white border-amber-700 shadow-sm'
+          : 'bg-white text-gray-600 border-gray-200 hover:border-amber-600 hover:text-amber-700'
+      }`;
+    });
+
+    // Markers
+    Object.values(markerMap).forEach(({ m, data }) => {
+      const visible = filter === 'all' || data.category === filter;
+      m.setOpacity(visible ? 1 : 0.18);
+      const el = m.getElement();
+      if (el) el.style.pointerEvents = visible ? '' : 'none';
+    });
+
+    // Close card if active restaurant filtered out
+    if (activeId) {
+      const r = markerMap[activeId]?.data;
+      if (r && filter !== 'all' && r.category !== filter) closeCard();
+    }
+  }
+
+  document.querySelectorAll('.filter-pill').forEach(btn => {
+    btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+  });
+  setFilter('all'); // init
+
+  // ── Search ───────────────────────────────────────────────────
+  const searchInput    = document.getElementById('search-input');
+  const searchDropdown = document.getElementById('search-dropdown');
+  const searchList     = document.getElementById('search-list');
+  const searchClear    = document.getElementById('search-clear');
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    searchClear.classList.toggle('hidden', !q);
+
+    if (!q) { searchDropdown.classList.remove('show'); return; }
+
+    const hits = RESTAURANTS.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      r.city.toLowerCase().includes(q) ||
+      categoryLabel(r.category).toLowerCase().includes(q)
+    );
+
+    searchList.innerHTML = hits.length
+      ? hits.map(r => `
+          <div data-id="${r.id}" class="search-item flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 cursor-pointer transition-colors border-b border-gray-50 last:border-0">
+            <div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0 border border-amber-100">
+              <span class="text-xs font-bold text-amber-700">GF</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-800 truncate">${r.name}</p>
+              <p class="text-xs text-gray-400">${r.city} · ${categoryLabel(r.category)}</p>
+            </div>
+            <div class="text-xs font-semibold text-amber-700 flex-shrink-0">${r.rating.toFixed(1)}★</div>
+          </div>`).join('')
+      : '<p class="text-xs text-gray-400 text-center py-5">No results found</p>';
+
+    document.querySelectorAll('.search-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const r = RESTAURANTS.find(x => x.id === +el.dataset.id);
+        if (!r) return;
+        map.flyTo([r.lat, r.lng], 15, { duration: 1.2 });
+        openCard(r);
+        searchInput.value = r.name;
+        searchDropdown.classList.remove('show');
+        searchClear.classList.remove('hidden');
+      });
+    });
+
+    searchDropdown.classList.add('show');
+  });
+
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchDropdown.classList.remove('show');
+    searchClear.classList.add('hidden');
+    searchInput.focus();
+  });
+
+  document.addEventListener('pointerdown', e => {
+    if (!e.target.closest('#search-input') && !e.target.closest('#search-dropdown')) {
+      searchDropdown.classList.remove('show');
+    }
+  });
+
+  // ── Card helpers ─────────────────────────────────────────────
+  function categoryLabel(cat) {
+    return { full_restaurant: 'Restaurant', bakery: 'Bakery', pizza: 'Pizza' }[cat] ?? cat;
+  }
+
+  function starsHTML(rating) {
+    return Array.from({ length: 5 }, (_, i) => {
+      const filled = i < Math.round(rating);
+      return `<svg class="w-3.5 h-3.5 ${filled ? 'text-amber-400' : 'text-gray-200'}" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+      </svg>`;
+    }).join('');
+  }
+
+  // ── Open / close card ────────────────────────────────────────
+  function openCard(r) {
+    // Reset previous active marker
+    if (activeId && markerMap[activeId]) {
+      markerMap[activeId].m.setIcon(pinIcon(false));
+    }
+    activeId = r.id;
+    markerMap[r.id].m.setIcon(pinIcon(true));
+
+    // Populate
+    document.getElementById('card-name').textContent    = r.name;
+    document.getElementById('card-badge').textContent   = categoryLabel(r.category);
+    document.getElementById('card-city').querySelector('span').textContent = r.city;
+    document.getElementById('card-stars').innerHTML     = starsHTML(r.rating);
+    document.getElementById('card-rating').textContent  = r.rating.toFixed(1);
+    document.getElementById('card-reviews').textContent = `(${r.reviews} reviews)`;
+    document.getElementById('card-conf-val').textContent = `${r.confidence}%`;
+    document.getElementById('card-reports').textContent = `Based on ${r.reports} GF community reports`;
+
+    document.getElementById('card-quotes').innerHTML = r.quotes.map(q => `
+      <div class="bg-stone-50 rounded-xl px-3 py-2.5 border border-gray-100">
+        <p class="text-xs text-gray-700 leading-relaxed">"${q.text}"</p>
+        <p class="text-xs text-gray-400 mt-1">— ${q.author}</p>
+      </div>`).join('');
+
+    document.getElementById('card-tags').innerHTML = r.tags.map(t => `
+      <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">${t}</span>`).join('');
+
+    // Directions link
+    document.getElementById('card-directions').onclick = () => {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${r.lat},${r.lng}`, '_blank');
+    };
+
+    // Show card
+    document.getElementById('card-panel').classList.add('open');
+
+    // Animate confidence bar
+    const bar = document.getElementById('card-confidence-bar');
+    bar.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bar.style.width = r.confidence + '%';
+    }));
+
+    lucide.createIcons();
+  }
+
+  function closeCard() {
+    document.getElementById('card-panel').classList.remove('open');
+    if (activeId && markerMap[activeId]) {
+      markerMap[activeId].m.setIcon(pinIcon(false));
+    }
+    activeId = null;
+    setTimeout(() => {
+      document.getElementById('card-confidence-bar').style.width = '0%';
+    }, 400);
+  }
+
+  document.getElementById('card-close').addEventListener('click', closeCard);
+  map.on('click', () => { if (activeId) closeCard(); });
+
+  // ── Boot ─────────────────────────────────────────────────────
+  lucide.createIcons();
+  </script>
+</body>
+</html>
